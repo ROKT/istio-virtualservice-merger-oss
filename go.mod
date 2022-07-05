@@ -11,8 +11,6 @@ require (
 	sigs.k8s.io/controller-runtime v0.9.0
 )
 
-require github.com/jstemmer/go-junit-report v1.0.0 // indirect
-
 require (
 	cloud.google.com/go v0.54.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
