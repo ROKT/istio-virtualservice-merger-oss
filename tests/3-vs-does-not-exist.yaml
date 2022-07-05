@@ -1,0 +1,43 @@
+
+
+apiVersion: istiomerger.monime.sl/v1alpha1
+kind: VirtualServiceMerge
+metadata:
+  name: review-routes
+  namespace: eks-example
+spec:
+  target:
+    name: "api-routes" ## the virtual service above
+    namespace: "" # empty or omitted means the same as the VirtualServiceMerge
+  patch: # same as https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+    http:
+      - match:
+          - uri:
+              prefix: "/reviews"
+        route:
+          - destination:
+              port:
+                number: 8080
+              host: "review-service"
+
+---
+
+apiVersion: istiomerger.monime.sl/v1alpha1
+kind: VirtualServiceMerge
+metadata:
+  name: product-routes
+  namespace: eks-example
+spec:
+  target:
+    name: "api-routes" ## the virtual service above
+    namespace: "" # empty or omitted means the same as the VirtualServiceMerge
+  patch: # same as https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+    http:
+      - match:
+          - uri:
+              prefix: "/products"
+        route:
+          - destination:
+              port:
+                number: 8080
+              host: "product-service"
