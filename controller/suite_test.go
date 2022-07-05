@@ -1,4 +1,4 @@
-package consumers
+package controllers
 
 import (
 	. "github.com/onsi/ginkgo/v2"
