@@ -17,11 +17,13 @@
 package main
 
 import (
+	"flag"
+	"log"
+
 	"github.com/monimesl/istio-virtualservice-merger/api/v1alpha1"
 	"github.com/monimesl/istio-virtualservice-merger/controller"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	versionedclient "istio.io/client-go/pkg/clientset/versioned"
-	"log"
 
 	"github.com/monimesl/operator-helper/config"
 	"github.com/monimesl/operator-helper/reconciler"
@@ -31,7 +33,6 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
-
 	// +kubebuilder:scaffold:imports
 )
 
@@ -47,9 +48,38 @@ func init() {
 }
 
 func main() {
+	var metricsAddr string
+	var enableLeaderElection bool
+	var probeAddr string
+	var namespaceToMonitor string
+	var leaderElectionID string
+	var pspRestrictedCM string
+	var pspRestrictedDDCM string
+	var pspBaselineCM string
+	var pspPrivilegedCM string
+	var defaultConfig string
+	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
+	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
+	flag.StringVar(&namespaceToMonitor, "managed-namespace", "kube-configs", "Select which namespace to monitor. Defaults to all namespaces.")
+	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
+		"Enable leader election for controller manager. "+
+			"Enabling this will ensure there is only one active controller manager.")
+	flag.StringVar(&leaderElectionID, "leader-election-id", "managed-namespace-leader.rokt.com", "Unique configmap id to lock leader election")
+	flag.StringVar(&pspRestrictedCM, "psp-restricted", "psp-restricted-config", "Configmap to load template for restricted rolebinding")
+	flag.StringVar(&pspRestrictedDDCM, "psp-restricted-datadog", "psp-restricted-datadog-config", "Configmap to load template for restricted datadog rolebinding")
+	flag.StringVar(&pspBaselineCM, "psp-baseline", "psp-baseline-config", "Configmap to load template for baseline rolebinding")
+	flag.StringVar(&pspPrivilegedCM, "psp-privileged", "psp-privileged-config", "Configmap to load template for privileged rolebinding")
+	flag.StringVar(&defaultConfig, "default-config", "default-config", "Configmap to load defualt config from")
+	opts := zap.Options{
+		Development: true,
+		// Level:       zapcore.DebugLevel,
+	}
+	opts.BindFlags(flag.CommandLine)
+	flag.Parse()
+
 	cfg, options := config.GetManagerParams(scheme,
-		"istio-merger-operator",
-		"istio.merger.monime.sl")
+		"istio-virtualservice-merger",
+		"istiomerger.monime.sl")
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
 		log.Fatalf("manager create error: %s", err)
