@@ -54,7 +54,7 @@ func main() {
 
 	cfg, options := config.GetManagerParams(scheme,
 		namespace,
-		"istiomerger.monime.sl")
+		"istio.merger.monime.sl")
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
 		log.Fatalf("manager create error: %s", err)
