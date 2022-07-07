@@ -49,7 +49,7 @@ func init() {
 
 func main() {
 	var namespace string
-	flag.StringVar(&namespace, "namespace", "istio-virtualservice-merger", "Select which namespace this controller is deployed")
+	flag.StringVar(&namespace, "namespace", "istio-merger-operator", "Select which namespace this controller is deployed")
 	flag.Parse()
 
 	cfg, options := config.GetManagerParams(scheme,
