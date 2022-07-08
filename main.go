@@ -32,6 +32,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	// +kubebuilder:scaffold:imports
 )
@@ -51,6 +52,12 @@ func main() {
 	var namespace string
 	flag.StringVar(&namespace, "namespace", "istio-merger-operator", "Select which namespace this controller is deployed")
 	flag.Parse()
+
+	//set logger
+	opts := zap.Options{
+		Development: true,
+	}
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	cfg, options := config.GetManagerParams(scheme,
 		namespace,
