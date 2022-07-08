@@ -18,7 +18,6 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/monimesl/istio-virtualservice-merger/api/v1alpha1"
