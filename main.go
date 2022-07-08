@@ -22,6 +22,7 @@ import (
 
 	"github.com/monimesl/istio-virtualservice-merger/api/v1alpha1"
 	"github.com/monimesl/istio-virtualservice-merger/controller"
+	"go.uber.org/zap/zapcore"
 	"istio.io/client-go/pkg/apis/networking/v1alpha3"
 	versionedclient "istio.io/client-go/pkg/clientset/versioned"
 
@@ -53,12 +54,15 @@ func main() {
 	flag.StringVar(&namespace, "namespace", "istio-merger-operator", "Select which namespace this controller is deployed")
 	flag.Parse()
 
-	//set logger
+	// set logger
 	opts := zap.Options{
 		Development: true,
+		Encoder:     zapcore.NewJSONEncoder(zapcore.EncoderConfig{}),
 	}
+
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	// start manager
 	cfg, options := config.GetManagerParams(scheme,
 		namespace,
 		"istiomerger.monime.sl")
