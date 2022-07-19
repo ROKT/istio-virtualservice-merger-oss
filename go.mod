@@ -1,6 +1,6 @@
 module github.com/monimesl/istio-virtualservice-merger
 
-go 1.17
+go 1.18
 
 require (
 	github.com/monimesl/operator-helper v0.0.0-20211129165217-faf73a6bf8de
