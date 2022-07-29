@@ -43,9 +43,9 @@ func Reconcile(ctx reconciler.Context, client versionedclient.Interface, patch *
 	} else if oputil.Contains(patch.Finalizers, finalizerName) {
 		if err := updateTarget(client, patch, true); err != nil {
 			if !kerr.IsNotFound(err) {
-				// ignore if virtuals service is not found
 				panic(err)
 			} else {
+				// ignore if virtuals service is not found
 				ctx.Logger().Info("Virtual service not found. Nothing to sync.")
 			}
 		}
@@ -58,9 +58,9 @@ func Reconcile(ctx reconciler.Context, client versionedclient.Interface, patch *
 	if patch.ResourceVersion != patch.Status.HandledRevision {
 		if err := updateTarget(client, patch, false); err != nil {
 			if !kerr.IsNotFound(err) {
-				// ignore if virtuals service is not found
 				panic(err)
 			} else {
+				// ignore if virtuals service is not found
 				ctx.Logger().Info("Virtual service not found. Nothing to sync.")
 			}
 		}
