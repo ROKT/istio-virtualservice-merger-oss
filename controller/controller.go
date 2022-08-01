@@ -124,6 +124,8 @@ func (r *VirtualServicePatchReconciler) Reconcile(_ context.Context, request rec
 				}
 				return err
 			}
+			// update completed, remove key from cache
+			r.OldObjectCache.Delete(oldObj)
 		} else {
 			if err := Reconcile(r.Context, r.IstioClient, patch, nil); err != nil {
 				if kerr.IsNotFound(err) {
