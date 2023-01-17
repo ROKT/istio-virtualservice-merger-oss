@@ -136,6 +136,9 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 	if err != nil {
 		//trigger event
 		r.EventRecorder.Event(patch, "Warning", "ReconciliationFailed", fmt.Sprintf("VirtualServiceMerge reconcile error: %s", err.Error()))
+		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
+			return result, err2
+		}
 
 		//update status
 		patch.Status.Error = patch.ResourceVersion
@@ -149,6 +152,9 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 	} else {
 		//trigger event
 		r.EventRecorder.Event(patch, "Normal", "ReconciliationSucceeded", "")
+		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
+			return result, err2
+		}
 		
 		//update status
 		patch.Status.Error = ""
