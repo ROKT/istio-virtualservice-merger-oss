@@ -137,6 +137,11 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		//trigger event
 		r.EventRecorder.Event(patch, "Warning", "ReconciliationFailed", fmt.Sprintf("VirtualServiceMerge reconcile error: %s", err.Error()))
 		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
+			if kerr.IsNotFound(err2) {
+				// do not need to panic just log output
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				return result, nil
+			}
 			return result, err2
 		}
 
