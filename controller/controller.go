@@ -137,12 +137,22 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		//trigger event
 		r.EventRecorder.Event(patch, "Warning", "ReconciliationFailed", fmt.Sprintf("VirtualServiceMerge reconcile error: %s", err.Error()))
 		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
+			if kerr.IsNotFound(err2) {
+				// do not need to panic just log output
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				return result, nil
+			}
 			return result, err2
 		}
 
 		//update status
 		patch.Status.Error = patch.ResourceVersion
 		if err := r.Context.Client().Status().Update(ctx, patch); err != nil {
+			if kerr.IsNotFound(err) {
+				// do not need to panic just log output
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				return result, nil
+			}
 			r.Context.Logger().Error(err, fmt.Sprintf("VirtualServiceMerge object (%s) status update error", patch.Name))
 
 			//trigger event
@@ -153,12 +163,22 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		//trigger event
 		r.EventRecorder.Event(patch, "Normal", "ReconciliationSucceeded", "")
 		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
+			if kerr.IsNotFound(err2) {
+				// do not need to panic just log output
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				return result, nil
+			}
 			return result, err2
 		}
 		
 		//update status
 		patch.Status.Error = ""
 		if err := r.Context.Client().Status().Update(ctx, patch); err != nil {
+			if kerr.IsNotFound(err) {
+				// do not need to panic just log output
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				return result, nil
+			}
 			r.Context.Logger().Error(err, fmt.Sprintf("VirtualServiceMerge object (%s) status update error", patch.Name))
 
 			//trigger event
