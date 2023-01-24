@@ -111,7 +111,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 			if err := Reconcile(r.Context, r.IstioClient, patch, oldObj); err != nil {
 				if kerr.IsNotFound(err) {
 					// do not need to panic just log output
-					r.Context.Logger().Info("Virtual service not found. Nothing to sync.")
+					r.Context.Logger().Info("Virtual service not found. Nothing to sync.", "virtalservice", patch.Spec.Target )
 					// update completed, remove key from cache
 					_ = r.OldObjectCache.Delete(oldObj)
 					return nil
@@ -124,7 +124,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 			if err := Reconcile(r.Context, r.IstioClient, patch, nil); err != nil {
 				if kerr.IsNotFound(err) {
 					// do not need to panic just log output
-					r.Context.Logger().Info("Virtual service not found. Nothing to sync.")
+					r.Context.Logger().Info("Virtual service not found. Nothing to sync.", "virtalservice", patch.Spec.Target )
 					return nil
 				}
 				return err
@@ -139,7 +139,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
 			if kerr.IsNotFound(err2) {
 				// do not need to panic just log output
-				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.", "virtalservicemerge", patch.Name )
 				return result, nil
 			}
 			return result, err2
@@ -150,7 +150,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		if err := r.Context.Client().Status().Update(ctx, patch); err != nil {
 			if kerr.IsNotFound(err) {
 				// do not need to panic just log output
-				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.", "virtalservicemerge", patch.Name )
 				return result, nil
 			}
 			r.Context.Logger().Error(err, fmt.Sprintf("VirtualServiceMerge object (%s) status update error", patch.Name))
@@ -165,7 +165,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		if err2 := r.Context.Client().Get(ctx, request.NamespacedName, patch); err2 != nil {
 			if kerr.IsNotFound(err2) {
 				// do not need to panic just log output
-				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.", "virtalservicemerge", patch.Name )
 				return result, nil
 			}
 			return result, err2
@@ -176,7 +176,7 @@ func (r *VirtualServicePatchReconciler) Reconcile(ctx context.Context, request r
 		if err := r.Context.Client().Status().Update(ctx, patch); err != nil {
 			if kerr.IsNotFound(err) {
 				// do not need to panic just log output
-				r.Context.Logger().Info("Virtual service merge not found. No status to update.")
+				r.Context.Logger().Info("Virtual service merge not found. No status to update.", "virtalservicemerge", patch.Name )
 				return result, nil
 			}
 			r.Context.Logger().Error(err, fmt.Sprintf("VirtualServiceMerge object (%s) status update error", patch.Name))
