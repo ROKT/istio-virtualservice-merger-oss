@@ -18,8 +18,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
 
 	"github.com/monimesl/istio-virtualservice-merger/api/v1alpha1"
 	"github.com/monimesl/istio-virtualservice-merger/controller"
@@ -54,7 +52,10 @@ func init() {
 
 func main() {
 	var namespace string
-	flag.StringVar(&namespace, "namespace", "istio-virtualservice-merger", "Select which namespace this controller is deployed")
+	flag.StringVar(
+		&namespace, "namespace", "istio-virtualservice-merger",
+		"Select which namespace this controller is deployed",
+	)
 	flag.Parse()
 
 	// set logger
@@ -67,25 +68,29 @@ func main() {
 	ctrl.SetLogger(log)
 
 	// start manager
-	cfg, options := config.GetManagerParams(scheme,
+	cfg, options := config.GetManagerParams(
+		scheme,
 		namespace,
-		"istiomerger.monime.sl")
+		"istiomerger.monime.sl",
+	)
 	//set metrics server address & port
 	options.MetricsBindAddress = ":8080"
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
-		log.Error(err, "manager create error",)
+		log.Error(err, "manager create error")
 	}
 	ic, err := versionedclient.NewForConfig(cfg)
 	if err != nil {
 		log.Error(err, "Failed to create istio client")
 	}
-	if err = reconciler.Configure(mgr,
+	if err = reconciler.Configure(
+		mgr,
 		&controllers.VirtualServicePatchReconciler{
-			IstioClient: ic, 
-			OldObjectCache: cache.NewIndexer(cache.MetaNamespaceKeyFunc, cache.Indexers{}), 
-			EventRecorder: mgr.GetEventRecorderFor("istio-virtualservice-merger-controller"),
-		}); err != nil {
+			IstioClient:    ic,
+			OldObjectCache: cache.NewIndexer(cache.MetaNamespaceKeyFunc, cache.Indexers{}),
+			EventRecorder:  mgr.GetEventRecorderFor("istio-virtualservice-merger-controller"),
+		},
+	); err != nil {
 		log.Error(err, "reconciler cfg error: %s")
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {
