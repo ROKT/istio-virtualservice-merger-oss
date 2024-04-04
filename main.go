@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/monimesl/istio-virtualservice-merger/api/v1alpha1"
@@ -61,8 +62,9 @@ func main() {
 		Development: true,
 		Encoder:     zapcore.NewJSONEncoder(zapcore.EncoderConfig{}),
 	}
+	log := zap.New(zap.UseFlagOptions(&opts))
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	ctrl.SetLogger(log)
 
 	// start manager
 	cfg, options := config.GetManagerParams(scheme,
@@ -72,11 +74,11 @@ func main() {
 	options.MetricsBindAddress = ":8080"
 	mgr, err := manager.New(cfg, options)
 	if err != nil {
-		log.Fatalf("manager create error: %s", err)
+		log.Error(err, "manager create error",)
 	}
 	ic, err := versionedclient.NewForConfig(cfg)
 	if err != nil {
-		log.Fatalf("Failed to create istio client: %s", err)
+		log.Error(err, "Failed to create istio client")
 	}
 	if err = reconciler.Configure(mgr,
 		&controllers.VirtualServicePatchReconciler{
@@ -84,9 +86,9 @@ func main() {
 			OldObjectCache: cache.NewIndexer(cache.MetaNamespaceKeyFunc, cache.Indexers{}), 
 			EventRecorder: mgr.GetEventRecorderFor("istio-virtualservice-merger-controller"),
 		}); err != nil {
-		log.Fatalf("reconciler cfg error: %s", err)
+		log.Error(err, "reconciler cfg error: %s")
 	}
 	if err = mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		log.Fatalf("operator start error: %s", err)
+		log.Error(err, "operator start error: %s")
 	}
 }

@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Build the operator binary
-FROM golang:1.18  as builder 
+FROM golang:1.22.0  as builder 
 
 WORKDIR /workspace
 # Copy the Go Modules manifests

@@ -1,6 +1,6 @@
 module github.com/monimesl/istio-virtualservice-merger
 
-go 1.18
+go 1.22.0
 
 require (
 	github.com/golang/mock v1.6.0
