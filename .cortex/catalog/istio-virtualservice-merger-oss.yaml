@@ -1,0 +1,21 @@
+openapi: 3.0.0
+info:
+  title: "Istio Virtual Service Merger OSS"
+  x-cortex-tag: "istio-virtualservice-merger-oss"
+  x-cortex-type: service
+  description: |
+    A simple kubernetes operator to merge seperated Istio virtual services using the same host.
+  x-cortex-git:
+    github:
+      repository: "ROKT/istio-virtualservice-merger-oss"
+      basepath: "istio-virtualservice-merger-oss"
+  x-cortex-owners:
+    - type: group
+      name: "rokt-global-infrastructure"
+      provider: CORTEX
+  x-cortex-groups:
+    - "lang-go"
+  x-cortex-oncall:
+    opsgenie:
+      type: SCHEDULE
+      id: "Rokt Global Infrastructure Build and Release_schedule"
